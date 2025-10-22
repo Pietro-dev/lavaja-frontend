@@ -18,10 +18,20 @@ export const CadastroServicos: React.FC = ()=>{
 
     const submit = () => {
         const novoServico: Servico = {
+            id,
+            dataCadastro,
             servico, 
             descricao, 
             valor: parseFloat(valor), 
             duracao: parseFloat(duracao)
+        }
+
+        if(id){
+            service
+                .atualizar(novoServico)
+                .then(response => {console.log("Atualizado!")
+                    
+                })
         }
         service
             .salvar(novoServico)
@@ -49,7 +59,9 @@ export const CadastroServicos: React.FC = ()=>{
             
             <div className="field is-grouped">
                 <div className="control">
-                    <button className="button is-primary is-dark" onClick={submit}>Salvar</button>
+                    <button className="button is-primary is-dark" onClick={submit}>
+                        {id ? "Atualizar" : "Salvar"}
+                    </button>
                 </div>
                 <div className="control">
                     <button className="button">Voltar</button>

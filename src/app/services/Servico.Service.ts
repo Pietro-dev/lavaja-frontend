@@ -11,7 +11,12 @@ export const useServicoService = ()=>{
         return response.data
     }
 
+    const atualizar = async (servico: Servico) : Promise<void> => {
+        const url:string = `${resourceURL}/${servico.id}`
+        await httpClient.put<Servico>(url, servico)
+    }
     return {
-        salvar
+        salvar,
+        atualizar
     }
 }

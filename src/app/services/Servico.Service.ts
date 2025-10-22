@@ -1,0 +1,17 @@
+import { httpClient } from 'app/http'
+import { Servico } from 'app/models/servicos'
+import { AxiosResponse } from 'axios'
+
+const resourceURL: string = "/api/servicos"
+
+export const useServicoService = ()=>{
+
+    const salvar = async (servico: Servico) : Promise<Servico> => {
+        const response: AxiosResponse<Servico> = await httpClient.post<Servico>(resourceURL, servico)
+        return response.data
+    }
+
+    return {
+        salvar
+    }
+}

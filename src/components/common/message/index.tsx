@@ -22,14 +22,13 @@ export const Message: React.FC<MessageProps> = ({
     titulo,
     field
 }) => {
-    const [ visible, setVisible ] = useState<Boolean>(true);
-
-    if(!visible) return null
+    const [ visible ] = useState<Boolean>(true);
+    
     return(
         <article className={`message is-${tipo}`}>
         <div className="message-header">
             <p>{titulo}</p>
-            <button className="delete" aria-label="delete" onClick={()=>{setVisible(false)}}></button>
+            <button className="delete" aria-label="delete"></button>
         </div>
         <div className="message-body">
             { field && `${field}: `}{texto}

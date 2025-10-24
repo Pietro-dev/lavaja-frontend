@@ -7,6 +7,14 @@ import { useServicoService } from 'app/services'
 import { Servico } from 'app/models/servicos'
 import { converterEmBigDecimal } from 'app/util/money'
 import { Alert } from 'components/common/message'
+import * as yup from 'yup'
+
+const validationSchema = yup.object().shape({
+    servico: yup.string().required(),
+    descricao: yup.string().required(),
+    valor: yup.number().required(),
+    duracao: yup.string().required()
+})
 
 export const CadastroServicos: React.FC = ()=>{
 
@@ -28,25 +36,35 @@ export const CadastroServicos: React.FC = ()=>{
             valor: converterEmBigDecimal(valor), 
             duracao: converterEmBigDecimal(duracao)
         }
-
-        if(id){
+        validationSchema.validate(novoServico).then(obj => {
+            if(id){
+                service
+                    .atualizar(novoServico)
+                    .then(response => {
+                        setMessages([
+                            { texto:"Serviço atualizado com sucesso!", tipo:"success", titulo:"Sucesso!" }
+                        ])
+                    })
+            }
             service
-                .atualizar(novoServico)
-                .then(response => {
+                .salvar(novoServico)
+                .then(servicoResposta => {
+                    setId(servicoResposta.id ?? '')
+                    setDataCadastro(servicoResposta.dataCadastro ?? '')
                     setMessages([
-                        { texto:"Serviço atualizado com sucesso!", tipo:"success", titulo:"Sucesso!" }
-                    ])
+                            { texto:"serviço salvo com sucesso!", tipo:"success", titulo:"Sucesso!" }
+                        ])
                 })
-        }
-        service
-            .salvar(novoServico)
-            .then(servicoResposta => {
-                setId(servicoResposta.id ?? '')
-                setDataCadastro(servicoResposta.dataCadastro ?? '')
-                setMessages([
-                        { texto:"serviço salvo com sucesso!", tipo:"success", titulo:"Sucesso!" }
-                    ])
-            })
+        }).catch(err => {
+            const field = err.path
+            const message = err.message
+            console.log( JSON.parse(JSON.stringify(err)))
+
+            setMessages([
+                { titulo: "Algo deu errado :(", field:field, texto:message, tipo:"danger"}
+            ])
+        })
+
             
     }
 

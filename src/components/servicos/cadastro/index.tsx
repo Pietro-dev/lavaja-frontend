@@ -12,9 +12,16 @@ import * as yup from 'yup'
 const validationSchema = yup.object().shape({
     servico: yup.string().trim().required("Campo obrigatório"),
     descricao: yup.string().trim().required("Campo obrigatório"),
-    preco: yup.number().required("Campo obrigatório").moreThan(0, "Preço deve ser diferente de zero"),
-    duracao: yup.string().trim().required("Campo obrigatório")
+    preco: yup.number().required("Campo obrigatório").moreThan(0, "Preço deve ser diferente de zero!"),
+    duracao: yup.number().required("Campo obrigatório").moreThan(0, "A duração deve ser diferente de zero!")
 })
+
+interface FormErrors {
+    servico?: string
+    descricao?: string
+    preco?: string
+    duracao?: string
+}
 
 export const CadastroServicos: React.FC = ()=>{
 
@@ -26,6 +33,7 @@ export const CadastroServicos: React.FC = ()=>{
     const [ id, setId ] = useState<string>('')
     const [ dataCadastro, setDataCadastro ] = useState<string>('')
     const [ messages, setMessages] = useState<Array<Alert>>([])
+    const [ errors, setErrors ] = useState<FormErrors>({})
 
     const submit = () => {
         const novoServico: Servico = {
@@ -37,6 +45,8 @@ export const CadastroServicos: React.FC = ()=>{
             duracao: converterEmBigDecimal(duracao)
         }
         validationSchema.validate(novoServico).then(obj => {
+            setErrors({})
+
             if(id){
                 service
                     .atualizar(novoServico)
@@ -52,17 +62,16 @@ export const CadastroServicos: React.FC = ()=>{
                     setId(servicoResposta.id ?? '')
                     setDataCadastro(servicoResposta.dataCadastro ?? '')
                     setMessages([
-                            { texto:"serviço salvo com sucesso!", tipo:"success", titulo:"Sucesso!" }
+                            { texto:"Serviço salvo com sucesso!", tipo:"success", titulo:"Sucesso!" }
                         ])
                 })
         }).catch(err => {
             const field = err.path
             const message = err.message
-            console.log( JSON.parse(JSON.stringify(err)))
-
-            setMessages([
-                { titulo: "Algo deu errado :(", field:field, texto:message, tipo:"danger"}
-            ])
+            
+            setErrors({
+                [field]: message
+            })
         })
 
             
@@ -72,15 +81,53 @@ export const CadastroServicos: React.FC = ()=>{
         <Layout titulo='Cadastro de Serviços' mensagens={messages}>
             {id &&
                 <div className="field is-horizontal">
-                    <Input value={id} label="Código:" id="codigo" columnClasses='is-half' disabled/>
+                    <Input value={id} label="Código:" id="codigo" columnClasses='is-half' disabled />
                     <Input value={dataCadastro} label="Data de Cadastro:" id="dataCadastro" columnClasses='is-half' disabled/>
                 </div>         
             }
-            <Input onChange={setServico} value={servico} label="Serviço:" id="servico" columnClasses='is-full' type='text' placeholder='Lavagem Simples'/>
-            <Input onChange={setDescricao} value={descricao} label="Breve Descição:" id="descricao" columnClasses='is-full' type='text' placeholder='Lavagem interna + aspiração'/>
+            <Input 
+                onChange={setServico} 
+                value={servico} 
+                label="Serviço:" 
+                id="servico" 
+                columnClasses='is-full' 
+                type='text' 
+                placeholder='Lavagem Simples'
+                error={errors.servico}
+            />
+            <Input 
+                onChange={setDescricao} 
+                value={descricao} 
+                label="Breve Descição:" 
+                id="descricao" 
+                columnClasses='is-full' 
+                type='text' 
+                placeholder='Lavagem interna + aspiração'
+                error={errors.descricao}
+            />
             <div className="field is-horizontal">
-                <Input onChange={setpreco} value={preco} label="Preço:" id="preco" columnClasses='is-half' type='text' placeholder='1.000,00' currency maxLength={16}/>
-                <Input onChange={setDuracao} value={duracao} label="Duração em minutos:" id="duracao" columnClasses='is-half' type='number' placeholder='Quanto tempo dura o serviço?'/>
+                <Input 
+                    onChange={setpreco} 
+                    value={preco} 
+                    label="Preço:" 
+                    id="preco" 
+                    columnClasses='is-half' 
+                    type='text' 
+                    placeholder='1.000,00' 
+                    currency 
+                    maxLength={16}
+                    error={errors.preco}
+                />
+                <Input 
+                    onChange={setDuracao} 
+                    value={duracao} 
+                    label="Duração em minutos:" 
+                    id="duracao" 
+                    columnClasses='is-half' 
+                    type='number' 
+                    placeholder='Quanto tempo dura o serviço?'
+                    error={errors.duracao}
+                />
             </div>
             
             <div className="field is-grouped">

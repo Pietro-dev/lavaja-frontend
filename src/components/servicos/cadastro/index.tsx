@@ -8,6 +8,7 @@ import { Servico } from 'app/models/servicos'
 import { converterEmBigDecimal } from 'app/util/money'
 import { Alert } from 'components/common/message'
 import * as yup from 'yup'
+import Link from 'next/link'
 
 const validationSchema = yup.object().shape({
     servico: yup.string().trim().required("Campo obrigatório"),
@@ -137,7 +138,9 @@ export const CadastroServicos: React.FC = ()=>{
                     </button>
                 </div>
                 <div className="control">
-                    <button className="button">Voltar</button>
+                    <Link href="/consultas/servicos">
+                        <button className="button">Voltar</button>
+                    </Link>
                 </div>
             </div>
         </Layout>

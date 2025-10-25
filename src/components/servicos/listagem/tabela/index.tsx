@@ -2,10 +2,20 @@ import { Servico } from 'app/models/servicos'
 
 interface TabelaServicosProps {
     servicos: Array<Servico>
+    onEdit: (servico: Servico) => void
+    onDelete: (servico: Servico) => void
+}
+
+interface ServicoRowProps {
+    servico: Servico
+    onEdit: (servico: Servico) => void
+    onDelete: (servico: Servico) => void
 }
 
 export const TabelaServicos: React.FC<TabelaServicosProps> = ({
-    servicos
+    servicos,
+    onEdit,
+    onDelete
 }) => {
     return(
         <table className="table is-striped is-hoverable is-fullwidth">
@@ -20,18 +30,16 @@ export const TabelaServicos: React.FC<TabelaServicosProps> = ({
                 </tr>
             </thead>
             <tbody>
-                {servicos.map(servico => <ServicoRow key={servico.id} servico={servico}/>)}
+                {servicos.map(servico => <ServicoRow onDelete={onDelete} onEdit={onEdit} key={servico.id} servico={servico}/>)}
             </tbody>
         </table>
     )
 }
 
-interface ServicoRowProps {
-    servico: Servico
-}
-
 const ServicoRow: React.FC<ServicoRowProps> = ({
-    servico
+    servico,
+    onEdit,
+    onDelete
 }) => {
     return (
         <tr>
@@ -42,8 +50,8 @@ const ServicoRow: React.FC<ServicoRowProps> = ({
             <td>{servico.duracao}</td>
             <td>
                 <div className='buttons'>
-                    <button className='button is-warning is-dark'>Editar</button>
-                    <button className='button is-danger is-dark'>Deletar</button>
+                    <button onClick={e => onEdit(servico)} className='button is-warning is-dark is-rounded is-small'>Editar</button>
+                    <button onClick={e => onDelete(servico)} className='button is-danger is-dark is-rounded is-small'>Deletar</button>
                 </div>
             </td>
         </tr>

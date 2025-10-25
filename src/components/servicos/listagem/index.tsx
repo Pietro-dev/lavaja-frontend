@@ -12,6 +12,13 @@ export const ListagemServicos: React.FC = () => {
 
     const { data:result, error } = useSWR<AxiosResponse<Servico[]>>('/api/servicos', (url:string) => httpClient.get(url) ) 
 
+    const editar = (servico:Servico) => {
+        console.log(servico)
+    }
+    const deletar = (servico:Servico) => {
+        console.log(servico)
+    }
+    
     if(!result){
         return(
             <Loader show={!result}/>
@@ -22,8 +29,10 @@ export const ListagemServicos: React.FC = () => {
         <Layout titulo='Serviços cadastrados'>
             <Link href="/cadastros/servicos">
                 <button className="button is-primary is-dark">Novo</button>
+                <br />
+                <br />
             </Link>
-            <TabelaServicos servicos={result?.data || []}/>
+            <TabelaServicos onEdit={editar} onDelete={deletar} servicos={result?.data || []}/>
         </Layout>
  
     )

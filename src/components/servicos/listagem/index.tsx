@@ -1,6 +1,6 @@
 'use client'
 
-import { Layout } from 'components/layout'
+import { Layout, Loader } from 'components'
 import Link from 'next/link'
 import { TabelaServicos } from './tabela'
 import { Servico } from 'app/models/servicos'
@@ -14,7 +14,7 @@ export const ListagemServicos: React.FC = () => {
 
     if(!result){
         return(
-            <div>Carregando</div>
+            <Loader show={!result}/>
         )
     }
     

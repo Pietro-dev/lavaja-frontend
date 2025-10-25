@@ -1,26 +1,27 @@
 "use client";
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Layout } from 'components'
 import { Input, Message } from 'components'
 import { useServicoService } from 'app/services'
 import { Servico } from 'app/models/servicos'
-import { converterEmBigDecimal } from 'app/util/money'
+import { converterEmBigDecimal, formatReal } from 'app/util/money'
 import { Alert } from 'components/common/message'
 import * as yup from 'yup'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 const validationSchema = yup.object().shape({
     servico: yup.string().trim().required("Campo obrigatório"),
     descricao: yup.string().trim().required("Campo obrigatório"),
-    preco: yup.number().required("Campo obrigatório").moreThan(0, "Preço deve ser diferente de zero!"),
+    valor: yup.number().required("Campo obrigatório").moreThan(0, "Preço deve ser diferente de zero!"),
     duracao: yup.number().required("Campo obrigatório").moreThan(0, "A duração deve ser diferente de zero!")
 })
 
 interface FormErrors {
     servico?: string
     descricao?: string
-    preco?: string
+    valor?: string
     duracao?: string
 }
 
@@ -29,12 +30,29 @@ export const CadastroServicos: React.FC = ()=>{
     const service = useServicoService();
     const [ servico, setServico ] = useState<string>('')
     const [ descricao, setDescricao ] = useState<string>('')
-    const [ preco, setpreco ] = useState<string>('')
+    const [ valor, setValor ] = useState<string>('')
     const [ duracao, setDuracao ] = useState<string>('')
     const [ id, setId ] = useState<string>('')
     const [ dataCadastro, setDataCadastro ] = useState<string>('')
     const [ messages, setMessages] = useState<Array<Alert>>([])
     const [ errors, setErrors ] = useState<FormErrors>({})
+    const searchParams = useSearchParams()
+    const queryId = searchParams.get('id')
+
+    useEffect(() => {
+        if(queryId){
+            service.carregarServico(queryId).then(servicoEncontrado => {
+                console.log(servicoEncontrado)
+                setId(servicoEncontrado.id || '')
+                setDataCadastro(servicoEncontrado.dataCadastro || '')
+                setServico(servicoEncontrado.servico || '')
+                setDescricao(servicoEncontrado.descricao || '')
+                setDuracao(servicoEncontrado.duracao != null ? servicoEncontrado.duracao.toString() : '')
+                setValor(formatReal(servicoEncontrado.valor != null ? (servicoEncontrado.valor*100).toString() : ''))
+            })
+        }
+
+    }, [ queryId ])
 
     const submit = () => {
         const novoServico: Servico = {
@@ -42,7 +60,7 @@ export const CadastroServicos: React.FC = ()=>{
             dataCadastro,
             servico, 
             descricao, 
-            valor: converterEmBigDecimal(preco), 
+            valor: converterEmBigDecimal(valor), 
             duracao: converterEmBigDecimal(duracao)
         }
         validationSchema.validate(novoServico).then(obj => {
@@ -55,7 +73,7 @@ export const CadastroServicos: React.FC = ()=>{
                         setMessages([
                             { texto:"Serviço atualizado com sucesso!", tipo:"success", titulo:"Sucesso!" }
                         ])
-                    })
+                    }) 
             }
             service
                 .salvar(novoServico)
@@ -108,16 +126,16 @@ export const CadastroServicos: React.FC = ()=>{
             />
             <div className="field is-horizontal">
                 <Input 
-                    onChange={setpreco} 
-                    value={preco} 
+                    onChange={setValor} 
+                    value={valor} 
                     label="Preço:" 
-                    id="preco" 
+                    id="valor" 
                     columnClasses='is-half' 
                     type='text' 
                     placeholder='1.000,00' 
                     currency 
                     maxLength={16}
-                    error={errors.preco}
+                    error={errors.valor}
                 />
                 <Input 
                     onChange={setDuracao} 

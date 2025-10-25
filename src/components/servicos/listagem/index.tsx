@@ -7,13 +7,16 @@ import { Servico } from 'app/models/servicos'
 import useSWR from 'swr'
 import { httpClient } from 'app/http'
 import { AxiosResponse } from 'axios'
+import { useRouter } from 'next/navigation'
 
 export const ListagemServicos: React.FC = () => {
+    const router = useRouter()
 
     const { data:result, error } = useSWR<AxiosResponse<Servico[]>>('/api/servicos', (url:string) => httpClient.get(url) ) 
 
     const editar = (servico:Servico) => {
-        console.log(servico)
+        const url = `/cadastros/servicos?id=${servico.id}`
+        router.push(url)
     }
     const deletar = (servico:Servico) => {
         console.log(servico)

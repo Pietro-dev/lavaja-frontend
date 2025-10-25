@@ -15,8 +15,16 @@ export const useServicoService = ()=>{
         const url:string = `${resourceURL}/${servico.id}`
         await httpClient.put<Servico>(url, servico)
     }
+
+    const carregarServico = async (id:string) : Promise<Servico> => {
+        const url: string = `${resourceURL}/${id}`
+        const response: AxiosResponse<Servico> = await httpClient.get(url)
+        return response.data
+    }
+
     return {
         salvar,
-        atualizar
+        atualizar,
+        carregarServico
     }
 }

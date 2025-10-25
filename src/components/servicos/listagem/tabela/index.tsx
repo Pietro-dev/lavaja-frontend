@@ -38,7 +38,7 @@ const ServicoRow: React.FC<ServicoRowProps> = ({
             <td>{servico.id}</td>
             <td>{servico.servico}</td>
             <td>{servico.descricao}</td>
-            <td>{servico.preco}</td>
+            <td>{servico.valor}</td>
             <td>{servico.duracao}</td>
             <td>
                 <div className='buttons'>

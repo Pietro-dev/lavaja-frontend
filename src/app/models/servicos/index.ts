@@ -2,7 +2,7 @@ export interface Servico {
     id?: string,
     servico?: string,
     descricao?: string,
-    preco?: number,
+    valor?: number,
     duracao?: number,
     dataCadastro?: string
 }

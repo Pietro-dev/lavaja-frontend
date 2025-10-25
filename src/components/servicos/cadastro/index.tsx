@@ -42,7 +42,7 @@ export const CadastroServicos: React.FC = ()=>{
             dataCadastro,
             servico, 
             descricao, 
-            preco: converterEmBigDecimal(preco), 
+            valor: converterEmBigDecimal(preco), 
             duracao: converterEmBigDecimal(duracao)
         }
         validationSchema.validate(novoServico).then(obj => {

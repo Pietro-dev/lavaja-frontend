@@ -22,9 +22,15 @@ export const useServicoService = ()=>{
         return response.data
     }
 
+    const deletar = async (id:string) : Promise<void> => {
+        const url: string = `${resourceURL}/${id}`
+        await httpClient.delete(url)
+    }
+
     return {
         salvar,
         atualizar,
-        carregarServico
+        carregarServico,
+        deletar
     }
 }
